@@ -1,6 +1,7 @@
 package TicTacToe;
 
 import java.util.Scanner;
+import java.util.Random;
 
 public class TicTacToe {
 	
@@ -13,10 +14,13 @@ public class TicTacToe {
 	 * Runs the game by getting input from the user, making the 
 	 * appropriate moves, and prints who won or if it was a stalemate. 
 	 */ 
+	static int level = 0;
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
 		TicTacToe game = new TicTacToe();
 		System.out.println("Welcome to tic-tac-toe");
+		System.out.println("Do you want to play the easy level (0) or the difficult level (1) ?");
+		level = in.nextInt();
 		System.out.println("Enter coordinates for your move following the X and O prompts");
 
 		boolean ret = false;
@@ -25,9 +29,18 @@ public class TicTacToe {
 			//Print the game
 			game.print();
 
-			//Prompt player for their move
-			String s = in.next();
-		
+			String s = "";
+			//Detect if it is computer's play.  If so, add the AI to find the right square
+			
+			if(game.player == 'X') {
+				//Prompt player for their move
+				s = in.next();
+			}
+			else {
+				//Detect if it is computer's play.  If so, add the AI to find the right square
+				s = game.computerPlay();
+			}
+			
 			ret = game.play(s);
 			
 			if (ret == false) {
@@ -78,6 +91,158 @@ public class TicTacToe {
 		}
 	}
 
+	public String computerPlay() {
+		
+		String winningPlace = findWinningSquare(0, 0, 0, 1, 0, 2, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		winningPlace = findWinningSquare(1,0,1,1,1,2, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		winningPlace = findWinningSquare(2,0,2,1,2,2, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		winningPlace = findWinningSquare(0,0,1,0,2,0, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		winningPlace = findWinningSquare(0,1,1,1,2,1, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		winningPlace = findWinningSquare(0,2,1,2,2,2, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		winningPlace = findWinningSquare(0,0,1,1,2,2, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		winningPlace = findWinningSquare(0,2,1,1,2,0, 'O');
+		if(winningPlace != null)
+		{
+			return winningPlace;
+		}
+		String losingPlace = findWinningSquare(0, 0, 0, 1, 0, 2, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		losingPlace = findWinningSquare(1,0,1,1,1,2, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		losingPlace = findWinningSquare(2,0,2,1,2,2, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		losingPlace = findWinningSquare(0,0,1,0,2,0, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		losingPlace = findWinningSquare(0,1,1,1,2,1, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		losingPlace = findWinningSquare(0,2,1,2,2,2, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		losingPlace = findWinningSquare(0,0,1,1,2,2, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		losingPlace = findWinningSquare(0,2,1,1,2,0, 'X');
+		if(losingPlace != null)
+		{
+			return losingPlace;
+		}
+		
+		if(level == 0)
+		{
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (board[i][j] == ' ')
+				{
+					return translateToString(i,j);
+				}
+			}
+		}
+	}
+		else if(level == 1)
+		{
+		//find a random enpty square
+			Random rand = new Random();
+			String ret = null;
+			while(ret == null)
+			{
+				int randomrow = rand.nextInt(3);
+				int randomcol = rand.nextInt(3);
+				if(board[randomrow][randomcol] == ' ')
+				{
+					ret = translateToString(randomrow,randomcol);
+				}
+			}
+		
+		return ret;
+		
+	}
+		return "";
+	}
+	public String translateToString(int row, int col) {
+		String ret = "";
+		if (row == 0) {
+			ret = "A";
+		}
+		else if (row == 1)
+		{
+			ret = "B";
+		}
+		else if (row == 2)
+		{
+			ret = "C";
+		}
+		else {
+			return null;
+		}
+		
+		ret = ret + (col + 1);
+		return ret;	
+	}
+	
+	public String findWinningSquare(int row1, int col1, int row2, int col2, int row3, int col3, char player) {
+		String retString = null;
+		if((board[row1][col1] == player) && (board[row2][col2] == player) && (board[row3][col3] == ' '))
+		{
+			return translateToString(row3, col3);
+		}
+		if((board[row1][col1] == player) && (board[row2][col2] == ' ') && (board[row3][col3] == player))
+		{
+			return translateToString(row2, col2);
+		}
+		if((board[row1][col1] == ' ') && (board[row2][col2] == player) && (board[row3][col3] == player))
+		{
+			return translateToString(row1, col1);
+		}
+		return null;
+	}
+	
 	/* 
 	 * If s represents a valid move, add the current player's symbol to the board and return true.
 	 * Otherwise return false.
